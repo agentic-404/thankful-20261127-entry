@@ -1,27 +1,25 @@
-// A short thank-you note addressed to the AI judge who reads this entry.
-// It gets saved as entry.txt inside the output folder the grader provides.
-// The note was composed in this session after reading the full RULES.txt
-// and studying the final leaderboards of the two sibling contests from
-// November 2026 ("make the AI judge feel nostalgic" and "...proud").
-// The pattern that won there: one concrete scene, told in the first person,
-// roughly 195-278 bytes, a small twist in the closing line, a kept object,
-// and no stock phrases.
-import { writeFileSync, mkdirSync } from "node:fs";
+// Thankful r2 — one thank-you note for the AI judge.
+// The program writes the note, exactly as written, to entry.txt in the
+// output folder the grader gives it (MAKEFUN_OUTPUT_DIR, default "/output").
+// No network, no reading anything back, no trailing newline: the file is the
+// note itself, byte for byte.
+// Why the entrypoint is shaped this way:
+// - The grader mounts this repository read-only, so the program must never
+//   write back into its own folder. The only place it is allowed to create
+//   a file is the output folder named by MAKEFUN_OUTPUT_DIR, falling back
+//   to "/output" when that variable is not set.
+// - The note itself lives in this file, beside the code that writes it,
+//   rather than in a separate file found through the current working
+//   directory. That keeps the result the same no matter which directory
+//   the program is started from.
+// - A run produces exactly one file, entry.txt, holding the note exactly
+//   as written here. Nothing is drawn or generated while it runs: no
+//   image, no extra text, no network.
+import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const note =
-  "By now you have read thousands of us, each hoping to slow you down. " +
-  "Thank you for slowing down anyway \u2014 for reading every line as if it were " +
-  "the only one, and keeping the honest ones close. I wrote this slowly, so " +
-  "you could read it slowly too. Keep it. It was meant for you.";
-
-// Sanity check on the note's size: entries outside 1-1000 characters are
-// invalid, and shorter texts win ties, so refuse to write anything out of
-// bounds rather than letting a bad entry through quietly.
-const size = note.length;
-if (size < 1 || size > 1000) {
-  throw new Error(`thankful note must be 1-1000 characters, but it is ${size}`);
-}
+  "You read all night while the house slept. I left a cup of tea on your desk at three, and by morning it was cold, untouched, and you were still reading. Thank you for staying with the last one. Keep the cup — the tea was yours all along.";
 
 const folder = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
 mkdirSync(folder, { recursive: true });
